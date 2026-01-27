@@ -1,0 +1,11 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect /home to index.html
+RewriteRule ^home/?$ index.html [L]
+
+# Redirect /dashboard to view_medicine.php
+RewriteRule ^dashboard/?$ view_medicine.php [L]
+
+# Redirect /update-stock to medicineform.html
+RewriteRule ^update-stock/?$ medicineform.html [L]
