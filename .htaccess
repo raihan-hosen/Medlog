@@ -1,11 +1,36 @@
 # Enable Rewrite Engine
 RewriteEngine On
 
-# Redirect /home to index.html
-RewriteRule ^home/?$ index.html [L]
+# --- Force HTTPS ---
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
-# Redirect /dashboard to view_medicine.php
+# --- Redirect www to non-www (optional) ---
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# --- Pretty URLs ---
+# /dashboard -> view_medicine.php
 RewriteRule ^dashboard/?$ view_medicine.php [L]
 
-# Redirect /update-stock to medicineform.html
-RewriteRule ^update-stock/?$ medicineform.html [L]
+# /login -> login.php
+RewriteRule ^login/?$ login.php [L]
+
+# /logout -> logout.php
+RewriteRule ^logout/?$ logout.php [L]
+
+# /add-medicine -> medicineform.html
+RewriteRule ^add-medicine/?$ medicineform.html [L]
+
+# --- Deny access to sensitive files ---
+<FilesMatch "^(db\.php|config\.php|\.htaccess)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# --- Prevent directory browsing ---
+Options -Indexes
+
+# --- Custom error pages ---
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
