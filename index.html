@@ -1,471 +1,191 @@
+<?php
+session_start();
+$loggedIn = isset($_SESSION['email']); // Check if user is logged in
+?>
 <!DOCTYPE html>
 <html lang="en">
-<style>
-    /* --- 1. Reset & Variables --- */
-    :root {
-        /* Color Palette - Modern Medical Theme */
-        --primary: #0ea5e9;
-        /* Bright Blue */
-        --primary-dark: #0284c7;
-        /* Darker Blue */
-        --secondary: #0f172a;
-        /* Deep Navy */
-        --accent: #14b8a6;
-        /* Teal */
-        --bg-light: #f8fafc;
-        /* Off-white */
-        --bg-white: #ffffff;
-        --text-main: #334155;
-        --text-light: #64748b;
-
-        /* Spacing & Effects */
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        --radius: 12px;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        color: --text-main;
-        background-color: var(--bg-white);
-        line-height: 1.6;
-        overflow-x: hidden;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4 {
-        font-family: 'Poppins', sans-serif;
-        color: var(--secondary);
-        line-height: 1.2;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-
-    /* --- 2. Hero Section --- */
-    .hero-section {
-        min-height: 90vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero-content {
-        z-index: 2;
-        max-width: 800px;
-    }
-
-    .badge {
-        background-color: rgba(14, 165, 233, 0.1);
-        color: var(--primary-dark);
-        padding: 8px 16px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        display: inline-block;
-        margin-bottom: 20px;
-    }
-
-    .hero-section h1 {
-        font-size: 4rem;
-        font-weight: 800;
-        margin-bottom: 15px;
-        background: linear-gradient(45deg, var(--secondary), var(--primary));
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .hero-section h6 {
-        font-size: 1.25rem;
-        color: var(--text-light);
-        font-weight: 400;
-        margin-bottom: 40px;
-    }
-
-    /* Buttons */
-    .cta-group {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-    }
-
-    .btn {
-        padding: 14px 28px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-    }
-
-    .btn-primary {
-        background-color: var(--primary);
-        color: white;
-        box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.39);
-    }
-
-    .btn-primary:hover {
-        background-color: var(--primary-dark);
-        transform: translateY(-2px);
-    }
-
-    .btn-outline {
-        background-color: transparent;
-        border: 2px solid var(--primary);
-        color: var(--primary);
-    }
-
-    .btn-outline:hover {
-        background-color: rgba(14, 165, 233, 0.05);
-    }
-
-    /* Background Blobs Animation */
-    .blob {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        z-index: 1;
-        opacity: 0.6;
-    }
-
-    .blob-1 {
-        top: -10%;
-        left: -10%;
-        width: 500px;
-        height: 500px;
-        background: #bae6fd;
-        animation: move 20s infinite alternate;
-    }
-
-    .blob-2 {
-        bottom: -10%;
-        right: -10%;
-        width: 400px;
-        height: 400px;
-        background: #99f6e4;
-        animation: move 25s infinite alternate-reverse;
-    }
-
-    @keyframes move {
-        from {
-            transform: translate(0, 0);
-        }
-
-        to {
-            transform: translate(50px, 50px);
-        }
-    }
-
-    /* --- 3. Content Sections --- */
-    .section {
-        padding: 100px 0;
-    }
-
-    .bg-light {
-        background-color: var(--bg-light);
-    }
-
-    .grid-layout {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 60px;
-        align-items: center;
-    }
-
-    .text-content h3 {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-        color: var(--secondary);
-    }
-
-    .text-content p {
-        font-size: 1.1rem;
-        color: var(--text-light);
-        margin-bottom: 20px;
-    }
-
-    .feature-image {
-        width: 100%;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-lg);
-        transition: transform 0.3s ease;
-    }
-
-    .feature-image:hover {
-        transform: scale(1.02);
-    }
-
-    /* Stats in Welcome Section */
-    .stats {
-        display: flex;
-        gap: 40px;
-        margin-top: 30px;
-        padding-top: 30px;
-        border-top: 1px solid #e2e8f0;
-    }
-
-    .stat-item {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .stat-item .number {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary);
-    }
-
-    .stat-item .label {
-        font-size: 0.9rem;
-        color: var(--text-light);
-    }
-
-    /* --- 4. Footer --- */
-    .footer {
-        background-color: var(--secondary);
-        color: white;
-        padding: 80px 0 30px;
-    }
-
-    .footer-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
-        margin-bottom: 60px;
-    }
-
-    /* Developer Profile */
-    .developer-profile {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .profile-pic {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        border: 3px solid var(--primary);
-        object-fit: cover;
-    }
-
-    .dev-details h4 {
-        color: white;
-        margin-bottom: 5px;
-        font-size: 1.2rem;
-    }
-
-    .dev-details span {
-        display: block;
-        color: #94a3b8;
-        font-size: 0.9rem;
-    }
-
-    /* Contact & Socials */
-    .contact-details {
-        text-align: right;
-    }
-
-    .contact-details h4 {
-        color: white;
-        margin-bottom: 15px;
-    }
-
-    .contact-link {
-        color: var(--primary);
-        text-decoration: none;
-        font-size: 1.1rem;
-        display: block;
-        margin-bottom: 20px;
-    }
-
-    .social-links {
-        display: flex;
-        gap: 15px;
-        justify-content: flex-end;
-    }
-
-    .social-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        color: white;
-        text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
-
-    .social-icon:hover {
-        background: var(--primary);
-    }
-
-    .copyright {
-        text-align: center;
-        padding-top: 30px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        color: #64748b;
-        font-size: 0.9rem;
-    }
-
-    /* --- 5. Responsive Design --- */
-    @media (max-width: 768px) {
-        .hero-section h1 {
-            font-size: 2.5rem;
-        }
-
-        .grid-layout {
-            grid-template-columns: 1fr;
-            gap: 40px;
-        }
-
-        .reverse-mobile {
-            display: flex;
-            flex-direction: column-reverse;
-        }
-
-        .footer-grid {
-            grid-template-columns: 1fr;
-            text-align: center;
-        }
-
-        .contact-details,
-        .social-links {
-            text-align: center;
-            justify-content: center;
-        }
-
-        .developer-profile {
-            flex-direction: column;
-            text-align: center;
-        }
-    }
-</style>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medi-Track | Smart Health Management</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medi-Track | Smart Health Management</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap"
-        rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+<style>
+/* --- Variables & Reset --- */
+:root {
+    --primary: #0ea5e9;
+    --primary-dark: #0284c7;
+    --secondary: #0f172a;
+    --accent: #14b8a6;
+    --bg-light: #f8fafc;
+    --bg-white: #ffffff;
+    --text-main: #334155;
+    --text-light: #64748b;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    --radius: 12px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter', sans-serif; color:var(--text-main); background-color:var(--bg-white); line-height:1.6; overflow-x:hidden; }
+h1,h2,h3,h4 { font-family:'Poppins', sans-serif; color:var(--secondary); line-height:1.2; }
+.container { max-width:1200px; margin:0 auto; padding:0 20px; }
+
+/* Hero Section */
+.hero-section { min-height:90vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%); position:relative; overflow:hidden; }
+.hero-content { z-index:2; max-width:800px; }
+.badge { background-color: rgba(14,165,233,0.1); color:var(--primary-dark); padding:8px 16px; border-radius:50px; font-weight:600; font-size:0.9rem; margin-bottom:20px; display:inline-block; }
+.hero-section h1 { font-size:4rem; font-weight:800; margin-bottom:15px; background:linear-gradient(45deg,var(--secondary),var(--primary)); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero-section h6 { font-size:1.25rem; color:var(--text-light); font-weight:400; margin-bottom:40px; }
+
+/* Buttons */
+.cta-group { display:flex; gap:15px; justify-content:center; }
+.btn { padding:14px 28px; border-radius:8px; font-weight:600; font-size:1rem; cursor:pointer; transition:all 0.3s ease; border:none; text-decoration:none; }
+.btn-primary { background-color:var(--primary); color:white; box-shadow:0 4px 14px 0 rgba(14,165,233,0.39); }
+.btn-primary:hover { background-color:var(--primary-dark); transform:translateY(-2px); }
+.btn-outline { background-color:transparent; border:2px solid var(--primary); color:var(--primary); }
+.btn-outline:hover { background-color:rgba(14,165,233,0.05); }
+
+/* Blobs */
+.blob { position:absolute; border-radius:50%; filter:blur(80px); z-index:1; opacity:0.6; }
+.blob-1 { top:-10%; left:-10%; width:500px; height:500px; background:#bae6fd; animation:move 20s infinite alternate; }
+.blob-2 { bottom:-10%; right:-10%; width:400px; height:400px; background:#99f6e4; animation:move 25s infinite alternate-reverse; }
+@keyframes move { from{transform:translate(0,0);} to{transform:translate(50px,50px);} }
+
+/* Sections */
+.section { padding:100px 0; }
+.bg-light { background-color:var(--bg-light); }
+.grid-layout { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+.text-content h3 { font-size:2.5rem; margin-bottom:20px; color:var(--secondary); }
+.text-content p { font-size:1.1rem; color:var(--text-light); margin-bottom:20px; }
+.feature-image { width:100%; border-radius:var(--radius); box-shadow:var(--shadow-lg); transition:transform 0.3s ease; }
+.feature-image:hover { transform:scale(1.02); }
+
+/* Stats */
+.stats { display:flex; gap:40px; margin-top:30px; padding-top:30px; border-top:1px solid #e2e8f0; }
+.stat-item .number { font-size:1.5rem; font-weight:700; color:var(--primary); }
+.stat-item .label { font-size:0.9rem; color:var(--text-light); }
+
+/* Footer */
+.footer { background-color:var(--secondary); color:white; padding:80px 0 30px; }
+.footer-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-bottom:60px; }
+.developer-profile { display:flex; align-items:center; gap:20px; }
+.profile-pic { width:80px; height:80px; border-radius:50%; border:3px solid var(--primary); object-fit:cover; }
+.dev-details h4 { color:white; margin-bottom:5px; font-size:1.2rem; }
+.dev-details span { display:block; color:#94a3b8; font-size:0.9rem; }
+.contact-details { text-align:right; }
+.contact-details h4 { color:white; margin-bottom:15px; }
+.contact-link { color:var(--primary); text-decoration:none; font-size:1.1rem; display:block; margin-bottom:20px; }
+.social-links { display:flex; gap:15px; justify-content:flex-end; }
+.social-icon { width:40px; height:40px; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; border-radius:50%; color:white; text-decoration:none; font-size:0.8rem; font-weight:bold; transition:background 0.3s; }
+.social-icon:hover { background:var(--primary); }
+.copyright { text-align:center; padding-top:30px; border-top:1px solid rgba(255,255,255,0.1); color:#64748b; font-size:0.9rem; }
+
+/* Responsive */
+@media (max-width:768px){
+.hero-section h1{font-size:2.5rem;}
+.grid-layout{grid-template-columns:1fr; gap:40px;}
+.reverse-mobile{display:flex; flex-direction:column-reverse;}
+.footer-grid{grid-template-columns:1fr; text-align:center;}
+.contact-details,.social-links{text-align:center; justify-content:center;}
+.developer-profile{flex-direction:column; text-align:center;}
+}
+</style>
 </head>
 
 <body>
 
-    <header class="hero-section">
-        <div class="container hero-content">
-            <span class="badge">Healthcare Simplified</span>
-            <h1>Medi-Track</h1>
-            <h6>Smart medicine management for people, families & healthcare providers.</h6>
+<!-- Hero Section -->
+<header class="hero-section">
+    <div class="container hero-content">
+        <span class="badge">Healthcare Simplified</span>
+        <h1>Medi-Track</h1>
+        <h6>Smart medicine management for people, families & healthcare providers.</h6>
 
-            <div class="cta-group">
-                <button class="btn btn-primary" onclick="location.href='view_medicine.php'">Go to Dashboard</button>
-                <button class="btn btn-outline" onclick="location.href='medicineform.html'">Add Medicine</button>
-            </div>
+        <div class="cta-group">
+            <?php if ($loggedIn): ?>
+                <a class="btn btn-primary" href="view_medicine.php">Dashboard</a>
+                <a href="logout.php" class="btn btn-outline">Logout</a>
+            <?php else: ?>
+                <a class="btn btn-primary" href="login.php">Login</a>
+                <a class="btn btn-outline" href="medicineform.php">Add Medicine</a>
+            <?php endif; ?>
         </div>
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </header>
+    </div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+</header>
 
-    <section class="section welcome-section">
-        <div class="container grid-layout">
-            <div class="text-content">
-                <h3>Welcome to Medi-Track</h3>
-                <p>Your personal medicine management system. We help you keep track of your medications, ensuring you
-                    never miss a dose and maintain a healthy lifestyle.</p>
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="number">100%</span>
-                        <span class="label">Secure</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="number">24/7</span>
-                        <span class="label">Tracking</span>
-                    </div>
+<!-- Welcome Section -->
+<section class="section welcome-section">
+    <div class="container grid-layout">
+        <div class="text-content">
+            <h3>Welcome to Medi-Track</h3>
+            <p>Your personal medicine management system. Keep track of your medications, doses, and inventory effortlessly.</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="number">100%</span>
+                    <span class="label">Secure</span>
                 </div>
-            </div>
-            <div class="image-content">
-                <img src="images/download.jpeg" alt="Medicine Management" class="feature-image"
-                    onerror="this.src='https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'">
-            </div>
-        </div>
-    </section>
-
-    <section class="section about-section bg-light">
-        <div class="container grid-layout reverse-mobile">
-            <div class="image-content">
-                <img src="images/download (1).jpeg" alt="About Medi-Track" class="feature-image"
-                    onerror="this.src='https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'">
-            </div>
-            <div class="text-content">
-                <h3>About Medi-Track</h3>
-                <p>The Medicine Tracker System is a web-based application developed to manage medicine records and
-                    assist with inventory management.</p>
-                <p>It helps maintain accurate medicine information and provides an easy way to track and review usage
-                    history, tailored for modern healthcare needs.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container footer-grid">
-
-            <div class="developer-profile">
-                <img src="https://scontent.fdac31-2.fna.fbcdn.net/v/t39.30808-1/469650309_1290443181993149_7124456102615817312_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeEQnTgeAxubH-87XnkykaZ6RRJp5cvnIaZFEmnly-chpiJKdCjrWg81utYZqvAQ6yEB9wsx4-_t3XhXdfAwBX97&_nc_ohc=Tv6q8KCjSvkQ7kNvwHlzsKc&_nc_oc=AdkBS9C8LLGdRRzduHxmpWK4yyaQNsAsQCFlb-LKVwe-suQXLxwAfVupdh-OVFx4faI&_nc_zt=24&_nc_ht=scontent.fdac31-2.fna&_nc_gid=Pt-xi70EisOWyGDJ2X2JqA&oh=00_Afk6sbpjEMKoNc5bGiXSn7VJzdHAg2D5D3CXZPzzFqvtEQ&oe=69476082"
-                    alt="MD Raihan Hosen" class="profile-pic">
-                <div class="dev-details">
-                    <h4>MD Raihan Hosen</h4>
-                    <span class="role">Student, Dept of CSE</span>
-                    <span class="uni">Khwaja Yunus Ali University</span>
-                </div>
-            </div>
-
-            <div class="contact-details">
-                <h4>Contact Us</h4>
-                <a href="mailto:medi-track@gmail.com" class="contact-link">medi-track@gmail.com</a>
-
-                <div class="social-links">
-                    <a href="#" target="_blank" class="social-icon">FB</a>
-                    <a href="#" target="_blank" class="social-icon">IG</a>
-                    <a href="https://www.instagram.com/mdraihanhosen/" target="_blank" class="social-icon">GH</a>
-                    <a href="https://www.linkedin.com/in/mdraihanhosen/" target="_blank" class="social-icon">IN</a>
+                <div class="stat-item">
+                    <span class="number">24/7</span>
+                    <span class="label">Tracking</span>
                 </div>
             </div>
         </div>
-        <div class="copyright">
-            <p>&copy; 2025 Medi-Track. All rights reserved by MD Raihan Hosen</p>
+        <div class="image-content">
+            <img src="assets/images/medicine-hero.jpg" alt="Medicine Management" class="feature-image">
         </div>
-    </footer>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="section about-section bg-light">
+    <div class="container grid-layout reverse-mobile">
+        <div class="image-content">
+            <img src="assets/images/about.jpg" alt="About Medi-Track" class="feature-image">
+        </div>
+        <div class="text-content">
+            <h3>About Medi-Track</h3>
+            <p>A web-based application to manage medicine records and inventory efficiently.</p>
+            <p>Track medicine usage history and maintain accurate records for personal or healthcare needs.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container footer-grid">
+        <div class="developer-profile">
+            <img src="assets/images/profile.jpg" alt="MD Raihan Hosen" class="profile-pic">
+            <div class="dev-details">
+                <h4>MD Raihan Hosen</h4>
+                <span class="role">Student, Dept of CSE</span>
+                <span class="uni">Khwaja Yunus Ali University</span>
+            </div>
+        </div>
+
+        <div class="contact-details">
+            <h4>Contact Us</h4>
+            <a href="mailto:medi-track@gmail.com" class="contact-link">medi-track@gmail.com</a>
+            <div class="social-links">
+                <a href="#" class="social-icon">FB</a>
+                <a href="#" class="social-icon">IG</a>
+                <a href="https://github.com/mdraihanhosen" class="social-icon">GH</a>
+                <a href="https://www.linkedin.com/in/mdraihanhosen/" class="social-icon">IN</a>
+            </div>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>&copy; 2025 Medi-Track. All rights reserved by MD Raihan Hosen</p>
+    </div>
+</footer>
 
 </body>
-
 </html>
