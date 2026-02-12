@@ -1,181 +1,347 @@
 <?php
+/**
+ * Medi-Track
+ * Update Medicine Stock Page
+ * Author: MD Raihan Hosen
+ */
+
 session_start();
+
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
     exit();
 }
+
 $user_name = $_SESSION['name'] ?? "User";
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Update Stock | Medi-Track</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Update Stock | Medi-Track</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-:root {
-    --primary: #2f855a;
-    --primary-dark: #276749;
-    --bg-body: #f9fafb;
-    --bg-card: #ffffff;
-    --text-head: #1a202c;
-    --text-body: #4a5568;
-    --text-muted: #a0aec0;
-    --radius: 12px;
-    --shadow: 0 6px 16px rgba(0,0,0,0.08);
-}
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
-/* Reset */
-* { margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif; }
-body { background: var(--bg-body); color: var(--text-body); min-height:100vh; display:flex; flex-direction:column; line-height:1.6; }
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --shadow-md: 0 4px 10px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
 
-/* Navbar */
-.navbar { background: var(--primary); padding: 14px 0; position: sticky; top:0; z-index:100; color:white; }
-.nav-content { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; padding:0 20px; }
-.logo { font-family:'Poppins', sans-serif; font-weight:700; font-size:1.5rem; text-decoration:none; color:white; }
-.logo span { color:#fefcbf; }
-.nav-buttons { display:flex; gap:10px; flex-wrap: wrap; }
-.btn-nav { padding:6px 14px; border-radius:30px; font-weight:500; text-decoration:none; font-size:0.9rem; transition: background 0.3s ease; }
-.btn-nav.primary { background:white; color: var(--primary); }
-.btn-nav.primary:hover { background: var(--primary-dark); color:white; }
-.btn-nav.outline { border:1px solid rgba(255,255,255,0.6); color:white; }
-.btn-nav.outline:hover { background:white; color: var(--primary); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-/* Page Header */
-.page-header { text-align:center; margin:40px 20px 20px; }
-.page-header h2 { font-size:1.9rem; color: var(--text-head); margin-bottom:8px; }
-.back-link { text-decoration:none; color: var(--primary); font-weight:500; }
-.back-link:hover { text-decoration:underline; }
+        body {
+            background: var(--bg-light);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* Form Card */
-.form-card { max-width:800px; margin:0 auto 70px; background: var(--bg-card); padding:50px; border-radius: var(--radius); box-shadow: var(--shadow); border:1px solid #e5e7eb; }
-form div { margin-bottom:24px; }
-label { display:block; font-weight:600; margin-bottom:8px; color: var(--text-head); font-size:1rem; }
-input[type="text"], input[type="number"], input[type="date"], select { width:100%; padding:14px 16px; border-radius:10px; border:1px solid #cbd5e0; font-size:1rem; }
-input:focus, select:focus { border-color: var(--primary); outline:none; }
-.radio-group { display:flex; align-items:center; gap:20px; }
-input[type="radio"] { accent-color: var(--primary); }
-input[type="submit"] { width:100%; padding:16px; border:none; border-radius:10px; background: var(--primary); color:white; font-weight:600; font-size:1rem; cursor:pointer; transition: background 0.3s ease; }
-input[type="submit"]:hover { background: var(--primary-dark); }
+        /* ================= NAVBAR ================= */
+        .navbar {
+            background: var(--primary);
+            padding: 15px 0;
+            color: white;
+        }
 
-/* Footer */
-.footer { background: var(--text-head); color:white; padding:40px 0 20px; margin-top:auto; }
-.footer-grid { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; gap:20px; padding:0 20px; flex-wrap: wrap; }
-.profile-pic { width:55px; height:55px; border-radius:50%; border:2px solid var(--primary); object-fit:cover; }
-.dev-details h4 { margin-bottom:4px; }
-.dev-details span { color: var(--text-muted); font-size:0.85rem; display:block; }
-.contact-link { color:#fefcbf; text-decoration:none; }
-.contact-link:hover { color: var(--primary); }
-.social-icon { display:inline-block; width:32px; height:32px; border-radius:50%; background: rgba(255,255,255,0.1); color:white; text-align:center; line-height:32px; margin-right:6px; transition: background 0.3s ease; }
-.social-icon:hover { background: var(--primary); }
-.footer .copyright { text-align:center; margin-top:20px; font-size:0.9rem; color:#d1d5db; }
+        .nav-content {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
 
-/* Responsive */
-@media(max-width:768px){
-.nav-content { flex-direction:column; gap:10px; }
-.nav-buttons { justify-content:center; }
-.footer-grid { flex-direction:column; text-align:center; gap:20px; }
-}
-</style>
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        .btn-outline {
+            border: 1px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* ================= PAGE HEADER ================= */
+        .page-header {
+            text-align: center;
+            margin: 40px 20px 20px;
+        }
+
+        .page-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= FORM CARD ================= */
+        .form-card {
+            max-width: 750px;
+            margin: 0 auto 60px;
+            background: var(--bg-white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+        }
+
+        form div {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 0.95rem;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        input[type="radio"] {
+            width: auto;
+        }
+
+        input[type="submit"] {
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ================= FOOTER ================= */
+        footer {
+            background: #0f172a;
+            color: white;
+            padding: 50px 20px 20px;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            text-decoration: none;
+            color: white;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+        }
+
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <nav class="navbar">
-<div class="nav-content">
-    <a href="index.php" class="logo">Medi<span>Track</span></a>
-    <div class="nav-buttons">
-        <a href="index.php" class="btn-nav primary">Home</a>
-        <a href="view_medicine.php" class="btn-nav outline">Dashboard</a>
-        <span class="btn-nav outline" style="cursor:default;"><?= htmlspecialchars($user_name); ?></span>
-        <a href="logout.php" class="btn-nav primary">Log Out</a>
+    <div class="nav-content">
+        <a href="index.php" class="logo">MediTrack</a>
+        <div class="nav-buttons">
+            <a href="index.php" class="btn-nav btn-primary">Home</a>
+            <a href="view_medicine.php" class="btn-nav btn-outline">Dashboard</a>
+            <span class="btn-nav btn-outline"><?= htmlspecialchars($user_name); ?></span>
+            <a href="logout.php" class="btn-nav btn-primary">Logout</a>
+        </div>
     </div>
-</div>
 </nav>
 
-<!-- Page Header -->
 <div class="page-header">
-<h2>Update Medicine Stock</h2>
-<a href="view_medicine.php" class="back-link">← Back to Dashboard</a>
+    <h2>Update Medicine Stock</h2>
+    <a href="view_medicine.php" class="back-link">← Back to Dashboard</a>
 </div>
 
-<!-- Form Card -->
 <div class="form-card">
-<form method="POST" action="medicineform.php">
-    <div>
-        <label for="medicine">Select Medicine</label>
-        <select name="medicine" id="medicine" required>
-            <option value="">-- Select Medicine --</option>
-            <option value="Sergel 40">Sergel 40</option>
-            <option value="Neugalin 75">Neugalin 75</option>
-            <option value="Nortin 10">Nortin 10</option>
-            <option value="Sixvit">Sixvit</option>
-            <option value="Felicita OD">Felicita OD</option>
-            <option value="Zaptra 12.5">Zaptra 12.5</option>
-            <option value="Maxgalin ER 75">Maxgalin ER 75</option>
-            <option value="Empalina 10/5">Empalina 10/5</option>
-            <option value="Losectil 20">Losectil 20</option>
-        </select>
-    </div>
-    <div>
-        <label for="quantity">Total Strips</label>
-        <input type="number" id="quantity" name="quantity" min="1" placeholder="e.g. 50" required>
-    </div>
-    <div>
-        <label for="lowStock">Low Stock Alert (Strips)</label>
-        <input type="number" id="lowStock" name="lowStock" min="1" placeholder="e.g. 5">
-    </div>
-    <div>
-        <label for="country">Country of Origin</label>
-        <input type="text" id="country" name="country" placeholder="e.g. Bangladesh">
-    </div>
-    <div>
-        <label for="expiryDate">Expiry Date</label>
-        <input type="date" id="expiryDate" name="expiryDate" required>
-    </div>
-    <div class="radio-group">
-        <label>Medicine Type</label>
-        <input type="radio" id="tablet" name="type" value="Tablet" required>
-        <label for="tablet">Tablet</label>
-        <input type="radio" id="capsule" name="type" value="Capsule">
-        <label for="capsule">Capsule</label>
-    </div>
-    <div>
-        <input type="submit" name="Add" value="Add Medicine">
-    </div>
-</form>
+    <form method="POST" action="medicineform.php">
+        <div>
+            <label>Select Medicine</label>
+            <select name="medicine" required>
+                <option value="">-- Select Medicine --</option>
+                <option>Sergel 40</option>
+                <option>Neugalin 75</option>
+                <option>Nortin 10</option>
+                <option>Sixvit</option>
+                <option>Felicita OD</option>
+                <option>Zaptra 12.5</option>
+                <option>Maxgalin ER 75</option>
+                <option>Empalina 10/5</option>
+                <option>Losectil 20</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Total Strips</label>
+            <input type="number" name="quantity" min="1" required>
+        </div>
+
+        <div>
+            <label>Low Stock Alert</label>
+            <input type="number" name="lowStock" min="1">
+        </div>
+
+        <div>
+            <label>Country of Origin</label>
+            <input type="text" name="country">
+        </div>
+
+        <div>
+            <label>Expiry Date</label>
+            <input type="date" name="expiryDate" required>
+        </div>
+
+        <div class="radio-group">
+            <label>Type:</label>
+            <input type="radio" name="type" value="Tablet" required> Tablet
+            <input type="radio" name="type" value="Capsule"> Capsule
+        </div>
+
+        <div>
+            <input type="submit" value="Update Stock">
+        </div>
+    </form>
 </div>
 
-<!-- Footer -->
-<footer class="footer">
-<div class="footer-grid">
-    <div class="developer-profile">
-        <img src="assets/images/profile.jpg" alt="MD Raihan Hosen" class="profile-pic">
-        <div class="dev-details">
-            <h4>MD Raihan Hosen</h4>
-            <span class="role">Student, Dept of CSE</span>
-            <span class="uni">Khwaja Yunus Ali University</span>
-        </div>
-    </div>
+<footer>
+    <div class="footer-content">
+        <img src="images/profile.jpg" class="profile-pic" alt="Profile">
 
-    <div class="contact-details">
-        <h4>Contact Us</h4>
-        <a href="mailto:raihanhosen1381@gmail.com" class="contact-link">raihanhosen1381@gmail.com</a>
+        <div>
+            <h3>MD Raihan Hosen</h3>
+            <p>Student, Dept of CSE</p>
+            <p>Khwaja Yunus Ali University</p>
+        </div>
+
+        <div>
+            <p>Contact: medi-track@gmail.com</p>
+        </div>
+
         <div class="social-links">
-            <a href="https://www.facebook.com/raihanhosen04" target="_blank" class="social-icon">FB</a>
-            <a href="https://www.instagram.com/raihan___hosen/" target="_blank" class="social-icon">IG</a>
-            <a href="https://github.com/raihan-hosen" target="_blank" class="social-icon">GH</a>
-            <a href="https://www.linkedin.com/in/md-raihan-hosen/" target="_blank" class="social-icon">LN</a>
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IG</a>
+            <a href="https://github.com/mdraihanhosen" class="social-icon">GH</a>
+            <a href="https://www.linkedin.com/in/mdraihanhosen/" class="social-icon">IN</a>
         </div>
     </div>
-</div>
-<div class="copyright">&copy; 2025 Medi-Track. All rights reserved by MD Raihan Hosen</div>
+
+    <div class="copyright">
+        © 2025 Medi-Track. All rights reserved.
+    </div>
 </footer>
 
 </body>
