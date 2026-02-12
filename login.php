@@ -1,120 +1,201 @@
 <?php
+
+
 session_start();
-include("db.php"); // make sure this file connects correctly
+require_once "db.php";
 
-if(isset($_POST['login'])){
-    $email = mysqli_real_escape_string($db, $_POST['email']);
-    $password = $_POST['password'];
+// Redirect if already logged in
+if (isset($_SESSION['email'])) {
+    header("Location: view_medicine.php");
+    exit();
+}
 
-    // Fetch user from DB
-    $query = "SELECT * FROM users WHERE email='$email'";
-    $result = mysqli_query($db, $query);
+$error = '';
 
-    if(mysqli_num_rows($result) == 1){
-        $user = mysqli_fetch_assoc($result);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
 
-        // Check hashed password
-        if(password_verify($password, $user['password'])){
-            // Password correct, set session
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['name'] = $user['name'];
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['full_name'] = $user['full_name'];
             header("Location: view_medicine.php");
-            exit;
+            exit();
         } else {
             $error = "Incorrect password!";
         }
     } else {
-        $error = "Email not found!";
+        $error = "User not found!";
     }
+    $stmt->close();
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Medicine Tracker – Login</title>
+<title>Login | Medi-Track</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
---primary:#3c796a;
---primary-dark:#2a554a;
---primary-light:#e6f2ef;
---primary-fade:rgba(60,121,106,0.1);
---secondary:#1f2937;
---text-body:#4b5563;
---bg-white:#ffffff;
---shadow-card:0 20px 40px rgba(60,121,106,0.15);
---radius:16px;
+/* ===== Reset & Base ===== */
+* {margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#f4f7f6;display:flex;justify-content:center;align-items:center;height:100vh;}
+a{text-decoration:none;}
+button{cursor:pointer;}
+
+/* ===== Card ===== */
+.login-card{
+    background:#fff;
+    padding:50px 40px;
+    border-radius:20px;
+    width:100%;
+    max-width:420px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.08),0 8px 16px rgba(0,0,0,0.05);
+    border:1px solid #e6ecea;
+    transition:0.3s ease;
+}
+.login-card:hover{transform:translateY(-4px);}
+
+/* ===== Title ===== */
+.login-card h2{
+    text-align:center;
+    font-family:'Poppins',sans-serif;
+    font-size:1.9rem;
+    font-weight:700;
+    margin-bottom:35px;
+    color:#1f2937;
 }
 
-body{font-family:'Inter',sans-serif;background:linear-gradient(180deg,var(--primary-light),#fff);color:var(--text-body);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+/* ===== Form Elements ===== */
+form div{margin-bottom:22px;}
+label{display:block;margin-bottom:8px;font-size:0.9rem;font-weight:600;color:#374151;}
+input[type="email"], 
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"]{
+    width:100%;
+    padding:14px 45px 14px 16px;
+    border-radius:12px;
+    border:2px solid #e5e7eb;
+    font-size:0.95rem;
+    transition:all 0.25s ease;
+    background:#f9fafb;
+}
+input::placeholder{color:#9ca3af;}
+input:focus{outline:none;border-color:#0ea5e9;background:#fff;box-shadow:0 0 0 4px rgba(14,165,233,0.15);}
 
-.container{max-width:1100px;width:100%;display:grid;grid-template-columns:1.1fr 1fr;gap:60px;padding:40px;}
+/* ===== Password Eye ===== */
+.password-wrapper{
+    position:relative;
+}
+.toggle-password{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:1.1rem;
+    cursor:pointer;
+    user-select:none;
+}
 
-.hero h1{font-size:2.8rem;font-weight:800;color:var(--secondary);margin-bottom:20px;}
-.hero p{font-size:1.1rem;margin-bottom:25px;}
-.hero ul{list-style:none;}
-.hero li{margin-bottom:12px;padding-left:24px;position:relative;}
-.hero li::before{content:"✔";position:absolute;left:0;color:var(--primary);font-weight:700;}
+/* ===== Button ===== */
+button{
+    width:100%;
+    padding:15px;
+    background:#0ea5e9;
+    color:#fff;
+    border:none;
+    font-size:1rem;
+    font-weight:600;
+    border-radius:12px;
+    transition:all 0.3s ease;
+    letter-spacing:0.5px;
+}
+button:hover{
+    background:#0284c7;
+    transform:translateY(-2px);
+    box-shadow:0 10px 20px rgba(14,165,233,0.25);
+}
 
-.card{background:rgba(255,255,255,0.75);backdrop-filter:blur(14px);border-radius:24px;padding:45px;box-shadow:var(--shadow-card);border:1px solid rgba(255,255,255,0.7);}
-.card h2{font-size:2rem;margin-bottom:10px;color:var(--secondary);}
-.card p{margin-bottom:30px;}
-.form-group{margin-bottom:18px;}
-label{display:block;font-weight:600;margin-bottom:6px;color:var(--secondary);}
-input{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(60,121,106,0.25);font-size:1rem;outline:none;transition:0.25s;}
-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-fade);}
-button{width:100%;margin-top:10px;padding:15px;border-radius:50px;border:none;background:var(--primary);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:0.3s;box-shadow:0 12px 24px rgba(60,121,106,0.35);}
-button:hover{background:var(--primary-dark);transform:translateY(-2px);}
-.extra{text-align:center;margin-top:25px;font-size:0.95rem;}
-.extra a{color:var(--primary);font-weight:600;text-decoration:none;}
-.extra a:hover{text-decoration:underline;}
-.error{color:red;margin-bottom:15px;font-weight:600;}
-@media(max-width:900px){.container{grid-template-columns:1fr;text-align:center;}.hero ul{display:inline-block;text-align:left;}}
+/* ===== Error Message ===== */
+.error{
+    background:#fde8e8;
+    color:#b91c1c;
+    padding:12px;
+    border-radius:12px;
+    font-size:0.85rem;
+    text-align:center;
+    margin-bottom:20px;
+    border:1px solid #f5c2c7;
+}
+
+/* ===== Footer ===== */
+.footer-text{
+    text-align:center;
+    font-size:0.75rem;
+    color:#6b7280;
+    margin-top:28px;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:480px){
+    .login-card{padding:35px 25px;}
+}
 </style>
 </head>
 
 <body>
-<div class="container">
-  <div class="hero">
-    <h1>Welcome Back</h1>
-    <p>Log in to access your medicine records, dashboards, and system tools securely.</p>
-    <ul>
-      <li>Secure user authentication</li>
-      <li>Fast access to dashboards</li>
-      <li>Protected medical data</li>
-      <li>Designed for healthcare systems</li>
-    </ul>
-  </div>
 
-  <div class="card">
-    <h2>Login to Your Account</h2>
-    <p>Enter your credentials to continue</p>
+<div class="login-card">
+    <h2>Medi-Track Login</h2>
+    <?php if($error): ?>
+        <div class="error"><?= htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+    <form method="POST" action="">
+        <div>
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" placeholder="Enter your email" required>
+        </div>
 
-<form method="post">
-    <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" name="email" placeholder="Enter your email" required>
-    </div>
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" placeholder="Enter your password" required>
-    </div>
-    <button type="submit" name="login">Login</button>
-</form>
+        <div class="password-wrapper">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="Enter your password" required>
+            <span class="toggle-password" onclick="togglePassword()">👁</span>
+        </div>
 
-<?php 
-if(isset($error)){
-    echo "<p style='color:red; text-align:center; margin-top:10px;'>$error</p>";
-}
-?>
+        <div>
+            <button type="submit" name="login">Login</button>
+        </div>
+    </form>
 
-    <div class="extra">
-      Don’t have an account? <a href="signup.php">Create one</a>
-    </div>
-  </div>
+    <div class="footer-text">&copy; 2025 Medi-Track. All rights reserved.</div>
 </div>
+
+<script>
+function togglePassword(){
+    const password = document.getElementById("password");
+    const icon = document.querySelector(".toggle-password");
+    if(password.type === "password"){
+        password.type = "text";
+        icon.textContent = "🙈";
+    } else {
+        password.type = "password";
+        icon.textContent = "👁";
+    }
+}
+</script>
+
 </body>
 </html>
