@@ -1,72 +1,145 @@
-💊 MedLog – Medicine Inventory Management System
+# 💊 MedLog
 
-MedLog is a web-based Medicine Inventory & Stock Management System designed to efficiently manage medicine records, track stock levels, and monitor low inventory alerts.
+### Medicine Inventory & Stock Management System
 
-🌐 Live Application: https://medlog.icu/Home
+MedLog is a web-based Medicine Inventory Management System built using **Core PHP and MySQL**.
+It helps manage medicine records, monitor stock levels, and generate low stock alerts efficiently.
 
-🚀 Features
+🌐 **Live Demo:** [https://medlog.icu/Home](https://medlog.icu/Home)
+💻 **GitHub Repository:** [https://github.com/raihan-hosen/Medlog](https://github.com/raihan-hosen/Medlog)
 
-🔐 Secure Admin Authentication
+---
 
-➕ Add New Medicines
+## 🚀 Features
 
-✏ Update Medicine Information
+* 🔐 Secure Admin Authentication (Session-Based Login)
+* ➕ Add New Medicines
+* ✏ Update Medicine Information
+* ❌ Delete Medicines
+* 📦 Real-Time Stock Management
+* ⚠ Low Stock Alert System
+* 📊 Dashboard Summary Overview
+* 🎨 Responsive User Interface (Bootstrap)
 
+---
 
-📦 Real-time Stock Management
+## 🛠 Tech Stack
 
-⚠ Low Stock Alert System
+| Layer    | Technology Used           |
+| -------- | ------------------------- |
+| Backend  | PHP (Core PHP)            |
+| Database | MySQL                     |
+| Frontend | HTML, CSS, Bootstrap      |
+| Hosting  | Shared Hosting Deployment |
 
-📊 Dashboard Overview
+---
 
+## 📸 Application Modules
 
-🛠 Tech Stack
+### 🔹 Authentication
 
-Backend: PHP (Core PHP)
+* Secure login system for admin
+* Session validation
+* Protected routes
 
-Database: MySQL
+### 🔹 Medicine Management
 
-Frontend: HTML, CSS, Bootstrap
+* Add medicines
+* Edit details
+* Delete records
+* Update stock quantity
 
-Hosting: Shared Hosting Deployment
+### 🔹 Dashboard
 
+* Total medicines count
+* Low stock indicator
+* Clean overview layout
 
-🗄 Database Structure
+---
 
-Main Table:
+## 🗄 Database Structure
 
-Medicine_Name
+Main table fields:
 
-Quantity
+* `Medicine_Name`
+* `Quantity`
+* `Low_Limit`
+* `Price`
+* `Manufacturer`
+* `Expiry_Date`
 
-Low_Limit
+---
 
-Price
+## ⚙ Installation Guide (Local Setup)
 
-Expiry_Date
+1. Clone the repository:
 
-
-⚙ Installation (For Local Setup)
-
-Clone the repository:
-
+```
 git clone https://github.com/raihan-hosen/Medlog.git
+```
 
+2. Move project folder to:
 
-Import the database into phpMyAdmin
+```
+htdocs (for XAMPP)
+```
 
-Configure db.php with your database credentials
+3. Create a database in phpMyAdmin.
 
-Run on localhost (XAMPP/WAMP)
+4. Import the SQL file (if available).
 
+5. Configure database credentials in:
 
-📌 Future Improvements
+```
+db.php
+```
 
-User roles (Admin/Staff)
+6. Start Apache & MySQL.
 
-Reporting & analytics dashboard
+7. Open in browser:
+
+```
+http://localhost/Medlog
+```
+
+---
+
+## 🔐 Default Admin Credentials
+
+```
+Email: admin@example.com
+Password: MyPassword123
+```
+
+*(Change credentials after deployment for security.)*
+
+---
+
+## 📈 Learning Outcomes
+
+This project strengthened my understanding of:
+
+* Backend development with PHP
+* CRUD operations
+* Relational database design
+* Session handling & authentication
+* Debugging production errors
+* Hosting and deployment
+
+---
+
+## 🔮 Future Improvements
+
+* Expiry date alert system
+* Sales tracking module
+* Reporting dashboard
+* Role-based authentication (Admin / Staff)
+* REST API version
+
+---
 
 ## 👨‍💻 Author
-**MD Raihan Hosen**  
-Department of CSE  
-Khwaja Yunus Ali University
+
+**Raihan Hosen**
+CSE Student
+Full-Stack Web Development Enthusiast
