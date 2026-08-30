@@ -5,8 +5,6 @@
 MedLog is a web-based Medicine Inventory Management System built using **Core PHP and MySQL**.
 It helps manage medicine records, monitor stock levels, and generate low stock alerts efficiently.
 
-🌐 **Live Demo:** [https://medlog.icu/Home](https://medlog.icu/Home) 
-
 💻 **GitHub Repository:** [https://github.com/raihan-hosen/Medlog](https://github.com/raihan-hosen/Medlog)
 
 ---
