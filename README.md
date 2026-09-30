@@ -140,7 +140,5 @@ This project strengthened my understanding of:
 ## 👨‍💻 Author
 
 **Raihan Hosen**
-
-CSE Student
-
+Khwaja Yunus Ali University
 Full-Stack Web Development Enthusiast
